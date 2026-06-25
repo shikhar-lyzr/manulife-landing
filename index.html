@@ -177,6 +177,32 @@
 </head>
 <body>
 
+<!-- ACCESS GATE — single shared passcode, shared alongside the URL (no SSO/auto-sign-in) -->
+<div id="gate" style="position:fixed;inset:0;z-index:1000;display:grid;place-items:center;background:#FBF8F2;padding:24px">
+  <form id="gate-form" style="width:min(420px,92vw);background:#fff;border:1px solid #E9E1D2;border-radius:18px;padding:40px 34px;text-align:center;box-shadow:0 18px 50px rgba(75,52,25,.14)">
+    <div style="font-family:'Playfair Display',Georgia,serif;font-size:12.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#673F1B">Private demo</div>
+    <h2 style="font-family:'Playfair Display',Georgia,serif;font-size:26px;margin:10px 0 8px;color:#2A2018">Mahindra × Manulife</h2>
+    <p style="color:#5E5040;font-size:14.5px;margin:0 0 22px">Agentic underwriting platform — enter the access code to continue.</p>
+    <input id="gate-input" type="password" autofocus placeholder="Access code" aria-label="Access code"
+      style="width:100%;box-sizing:border-box;font-size:16px;padding:13px 15px;border-radius:10px;border:1.5px solid #ddd6cc;outline:none;color:#2A2018" />
+    <div id="gate-err" style="display:none;color:#c0392b;font-size:13.5px;margin-top:10px;text-align:left">Incorrect access code — please try again.</div>
+    <button type="submit" style="margin-top:18px;width:100%;font-family:'DM Sans',sans-serif;font-weight:600;font-size:16px;padding:13px;border-radius:10px;border:none;cursor:pointer;background:#00A758;color:#fff">Enter →</button>
+  </form>
+</div>
+<script>
+(function(){
+  var CODE = "mahindra2026", KEY = "manulife.site.auth";
+  var gate = document.getElementById('gate');
+  if (localStorage.getItem(KEY) === '1') { gate.style.display = 'none'; return; }
+  document.getElementById('gate-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var input = document.getElementById('gate-input');
+    if (input.value.trim() === CODE) { try { localStorage.setItem(KEY,'1'); } catch(_){} gate.style.display = 'none'; }
+    else { document.getElementById('gate-err').style.display = 'block'; input.value=''; input.focus(); }
+  });
+})();
+</script>
+
 <!-- NAV -->
 <header class="nav">
   <div class="wrap nav-in">
@@ -232,11 +258,6 @@
       <p>The Indian life-insurance lifecycle has ten regulated stages. The same agentic layer can run any of them — and every case it touches compounds into Organizational General Intelligence.</p>
     </div>
 
-    <div class="fabric-callout">
-      <span class="chip-demo">▶ Live demo today — Customer Onboarding &amp; Underwriting</span>
-      <span class="chip-future">→ Eventually, the entire lifecycle enhances OGI</span>
-    </div>
-
     <div class="vc-band">Life Insurance Value Chain — India Market · IRDAI regulated</div>
     <div class="chain">
       <div class="stage"><span class="n">1</span><h4>Needs Assessment &amp; Financial Planning</h4><ul><li>Protection</li><li>Savings</li><li>Tax (80C/10(10D))</li><li>Retirement</li></ul></div>
@@ -277,7 +298,7 @@
       <div>
         <span class="eyebrow">Journey 1 · Live</span>
         <h2>Customer onboarding, in minutes.</h2>
-        <p class="muted" style="font-size:16px;margin-top:12px">Meet Arjun — a diabetic, sub-standard life applying for a ₹1 crore term plan. The agents take him from link to a referred, fully-documented proposal.</p>
+        <p class="muted" style="font-size:16px;margin-top:12px">Meet Arjun — a diabetic, Rated life applying for a ₹1 crore term plan. The agents take him from link to a referred, fully-documented proposal.</p>
         <div class="steps">
           <div class="step"><span class="dot">1</span> Link + DPDP Act 2023 consent (free-look set to 15 days)</div>
           <div class="step"><span class="dot">2</span> Liveness + Aadhaar OTP + face match · CKYC verified</div>
@@ -313,7 +334,7 @@
       </div>
       <div>
         <span class="eyebrow">Journey 2 · Live</span>
-        <h2>Underwriting a real sub-standard life.</h2>
+        <h2>Underwriting a real Rated life.</h2>
         <p class="muted" style="font-size:16px;margin-top:12px">The proposal arrives pre-scored. AI reads the lab report, screens diabetic complications via ABDM, and builds a transparent, line-by-line mortality rating.</p>
         <div class="steps">
           <div class="step"><span class="dot">1</span> Lab report AI extraction (values vs reference ranges)</div>
@@ -388,7 +409,7 @@
     <div class="sec-head"><span class="eyebrow">Value over time</span><h2>Gets more valuable with every journey.</h2></div>
     <div class="rmap">
       <div class="rcard"><div class="tag">Now</div><h3>Two live journeys + OGI</h3><p>Onboarding and underwriting running end-to-end, with a live portfolio and risk view benchmarked to IRDAI.</p></div>
-      <div class="rcard"><div class="tag">Next</div><h3>LyzrGPT over your book</h3><p>Leadership asks the portfolio questions in plain language — "diabetic sub-standard exposure in Maharashtra vs IRDAI?" — with sourced answers.</p></div>
+      <div class="rcard"><div class="tag">Next</div><h3>LyzrGPT over your book</h3><p>Leadership asks the portfolio questions in plain language — "diabetic Rated-life exposure in Maharashtra vs IRDAI?" — with sourced answers.</p></div>
       <div class="rcard"><div class="tag">Then</div><h3>ShadowLM &amp; full lifecycle</h3><p>Private on-VPC inference, plus servicing, claims and investments — every stage compounding into OGI.</p></div>
     </div>
   </div>
