@@ -320,7 +320,8 @@
       <div class="embed" data-embed="onboarding">
         <div class="embed-bar"><div class="dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div><div class="url">manulife-underwriting-web.onrender.com/onboarding-live</div><a class="open" target="_blank" rel="noopener">Open ↗</a></div>
         <div class="embed-stage">
-          <div class="embed-cover"><div class="play">▶</div><b style="font-size:17px">Launch the live onboarding journey</b><p>Opens the live app in a new tab — first load may take ~30s to wake the server.</p></div>
+          <video class="embed-video" preload="none" controls playsinline style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000"><source src="assets/onboarding.mp4" type="video/mp4"></video>
+          <div class="embed-cover"><div class="play">▶</div><b style="font-size:17px">Play the onboarding walkthrough</b><p>Plays the recorded demo inline. No video yet? Opens the live app in a new tab (~30s cold start).</p></div>
         </div>
       </div>
     </div>
@@ -334,7 +335,8 @@
       <div class="embed" data-embed="underwriting">
         <div class="embed-bar"><div class="dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div><div class="url">manulife-underwriting-web.onrender.com/underwriting</div><a class="open" target="_blank" rel="noopener">Open ↗</a></div>
         <div class="embed-stage">
-          <div class="embed-cover"><div class="play" style="background:var(--gold);box-shadow:0 10px 30px rgba(200,133,43,.4)">▶</div><b style="font-size:17px">Launch the underwriting workbench</b><p>Lab extraction, complication screening and the mortality-loading worksheet — with human sign-off.</p></div>
+          <video class="embed-video" preload="none" controls playsinline style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000"><source src="assets/underwriting.mp4" type="video/mp4"></video>
+          <div class="embed-cover"><div class="play" style="background:var(--gold);box-shadow:0 10px 30px rgba(200,133,43,.4)">▶</div><b style="font-size:17px">Play the underwriting walkthrough</b><p>Lab extraction, complication screening and the mortality-loading worksheet — with human sign-off.</p></div>
         </div>
       </div>
       <div>
@@ -369,7 +371,8 @@
     <div class="embed" data-embed="intelligence" style="max-width:980px;margin:0 auto">
       <div class="embed-bar"><div class="dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div><div class="url">manulife-underwriting-web.onrender.com/intelligence</div><a class="open" target="_blank" rel="noopener">Open ↗</a></div>
       <div class="embed-stage" style="aspect-ratio:16/9">
-        <div class="embed-cover"><div class="play" style="background:var(--brown);box-shadow:0 10px 30px rgba(103,63,27,.45)">▶</div><b style="font-size:17px">Open the intelligence view</b><p>Live India risk map · portfolio vs IRDAI benchmark · emerging-cohort signal.</p></div>
+        <video class="embed-video" preload="none" controls playsinline style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000"><source src="assets/intelligence.mp4" type="video/mp4"></video>
+        <div class="embed-cover"><div class="play" style="background:var(--brown);box-shadow:0 10px 30px rgba(103,63,27,.45)">▶</div><b style="font-size:17px">Play the intelligence walkthrough</b><p>Live India risk map · portfolio vs IRDAI benchmark · emerging-cohort signal.</p></div>
       </div>
     </div>
     <p class="embed-note" style="text-align:center;margin-top:12px">Routes are configurable — update <code>APP</code> in the page script if Shikhar's paths differ.</p>
@@ -455,16 +458,30 @@
     });
   });
 
-  // Only the journey/intelligence section panels launch Shikhar's app (new tab)
+  // Each panel plays its recorded walkthrough inline (assets/<key>.mp4).
+  // If the video file isn't present yet, it gracefully falls back to opening
+  // the live app in a new tab — so the page works before the recordings land.
   document.querySelectorAll('.embed').forEach(box => {
     const key = box.getAttribute('data-embed');
     const url = APP + (ROUTES[key] || "/");
     const open = box.querySelector('.open');
     if (open) open.href = url;
     const cover = box.querySelector('.embed-cover');
-    const stage = box.querySelector('.embed-stage');
+    const video = box.querySelector('video.embed-video');
     cover.style.cursor = 'pointer';
-    cover.addEventListener('click', () => { window.open(url, '_blank', 'noopener'); });
+
+    function openApp() { window.open(url, '_blank', 'noopener'); }
+    function revert() { if (video) video.style.display = 'none'; cover.style.display = 'flex'; }
+
+    cover.addEventListener('click', () => {
+      if (!video) { openApp(); return; }
+      // If the source 404s, the <video> fires 'error' → revert + open the app.
+      video.addEventListener('error', () => { revert(); openApp(); }, { once: true });
+      cover.style.display = 'none';
+      video.style.display = 'block';
+      const p = video.play();
+      if (p && p.catch) p.catch(() => { revert(); openApp(); });
+    });
   });
 </script>
 </body>
